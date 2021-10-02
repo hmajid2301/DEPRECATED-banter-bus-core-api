@@ -1,24 +1,19 @@
 {
-  "name": "koa-ts-boilerplate",
-  "version": "1.0.0",
-  "description": "Node.js App Boilerplate",
-  "main": "dist/index.js",
-  "author": "kryz <k@kryz.dev>",
+  "name": "banter-bus-core-api",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "start:prod": "node dist/index.js",
-    "start:dev": "tsc-watch --noClear --onSuccess 'node -r dotenv/config dist/index.js'",
-    "start:development": "tsc-watch --noClear --onSuccess 'node -r dotenv/config dist/index.js'",
-    "start:debugging": "tsc-watch --noClear --onSuccess 'node -r dotenv/config --inspect=0.0.0.0:9229 dist/index.js'",
-    "migrate:dev": "db-migrate -e dev up",
+    "start": "tsc-watch --noClear --onSuccess 'node -r dotenv/config dist/index.js'",
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist coverage node_modules yarn-error.log mongo-config.tmp",
-    "test": "jest --watch",
-    "test:once": "jest",
+    "test": "jest",
     "test:coverage": "jest --detectOpenHandles --forceExit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint \"src/**/*.{ts,js}\"",
-    "format:write": "prettier --write \"src/**/*.{ts,js}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,js}\""
+    "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
+    "format": "prettier --write \"src/**/*.{ts,js}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js}\"",
+    "types:check": "tsc --noEmit"
   },
   "dependencies": {
     "@koa/cors": "3.0.0",
@@ -26,7 +21,9 @@
     "agenda": "2.3.0",
     "class-transformer": "0.3.1",
     "class-validator": "0.13.0",
-    "db-migrate": "0.11.6",
+    "convict": "^5.2.1",
+    "convict-format-with-validator": "^6.2.0",
+    "db-migrate": "^0.11.12",
     "db-migrate-mongodb": "1.5.0",
     "event-dispatch": "0.4.1",
     "http-status-codes": "1.4.0",
@@ -37,17 +34,17 @@
     "koa-bodyparser": "4.2.1",
     "koa-helmet": "5.2.0",
     "koa-router": "7.4.0",
-    "koa-swagger-decorator": "1.6.0",
     "mongoose": "6.0.4",
-    "mongoose-to-swagger": "1.0.0",
     "reflect-metadata": "0.1.13",
+    "socket.io": "^4.2.0",
     "uuid": "3.3.3",
-    "winston": "3.2.1"
+    "winston": "3.2.1",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "8.2.0",
-    "@commitlint/config-conventional": "8.2.0",
     "@types/agenda": "2.0.6",
+    "@types/convict": "^6.1.1",
+    "@types/convict-format-with-validator": "^6.0.2",
     "@types/jest": "24.0.23",
     "@types/koa": "2.11.0",
     "@types/koa-bodyparser": "4.3.0",
@@ -68,12 +65,23 @@
     "eslint-plugin-prettier": "3.1.2",
     "husky": "3.1.0",
     "jest": "24.9.0",
-    "mongodb-memory-server-global": "5.2.0",
+    "lint-staged": "^11.0.1",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "supertest": "4.0.2",
     "ts-jest": "24.2.0",
     "tsc-watch": "4.0.0",
     "typescript": "3.7.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "npm run lint:fix",
+      "npm run format"
+    ]
   }
 }

@@ -1,142 +1,99 @@
-image: golang:1.16
+image: node:14.17.5
 
 stages:
   - pre
   - test
-  - build
-  - publish
   - post
 
 variables:
-  DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
 
-# before_script:
-  # - go mod download
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm
 
-# .test:
-#   services:
-#     - name: mongo:4.4.4
-#       alias: banter-bus-database
-#     - name: registry.gitlab.com/banter-bus/banter-bus-gui:test
-#       alias: banter-bus-gui
-#     - name: registry.gitlab.com/banter-bus/banter-bus-core-api:test
-#       alias: banter-bus-core-api
-#     - name: registry.gitlab.com/banter-bus/banter-bus-management-api:test
-#       alias: banter-bus-management-api
-#     - name: registry.gitlab.com/banter-bus/banter-bus-tests/database-seed:latest
-#       alias: banter-bus-database-seed
-#   variables:
-#     BANTER_BUS_DB_HOST: "banter-bus-database"
-#     BANTER_BUS_WEBSERVER_PORT: 8090
-#     MONGO_INITDB_ROOT_USERNAME: "banterbus"
-#     MONGO_INITDB_ROOT_PASSWORD: "banterbus"
-#     MONGO_INITDB_DATABASE: "banterbus"
-#     MONGO_HOSTNAME: banter-bus-database:27017
-#     BANTER_BUS_MANAGEMENT_API_BASE_URL: "http://banter-bus-management-api"
-#     FF_NETWORK_PER_BUILD: 1
+before_script:
+  - npm ci --cache .npm --prefer-offline
 
-# publish-docker:test:
-#   stage: pre
-#   only:
-#     - main
-#   image: docker
-#   services:
-#     - docker:dind
-#   before_script: []
-#   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - docker build -f Dockerfile -t ${CI_REGISTRY_IMAGE}:test .
-#     - docker push ${CI_REGISTRY_IMAGE}:test
+install:dependencies:
+  stage: pre
+  only:
+    - merge_request
+    - main
+  script:
+    - npm ci
+  cache:
+    policy: pull-push
+  artifacts:
+    expire_in: 1h
+    paths:
+      - node_modules
 
-# lint:
-#   stage: test
-#   only:
-#     - merge_request
-#   script:
-#     - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.41.1
-#     - make lint
+publish-docker:test:
+  stage: pre
+  only:
+    - main
+  image: docker
+  services:
+    - docker:dind
+  before_script: []
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f Dockerfile -t ${CI_REGISTRY_IMAGE}:test --build-arg MODE=staging .
+    - docker build -f Dockerfile -t ${CI_REGISTRY_IMAGE}:e2e --build-arg MODE=test .
+    - docker push ${CI_REGISTRY_IMAGE}:test
+    - docker push ${CI_REGISTRY_IMAGE}:e2e
 
-# format:check:
-#   stage: test
-#   only:
-#     - merge_request
-#   script:
-#     - go get -u github.com/segmentio/golines
-#     - if [[ $(make format | wc -c) -ne 0 ]]; then exit 1; fi
+lint:commits:
+  stage: test
+  only:
+    - merge_request
+  before_script: []
+  allow_failure: true
+  script:
+    - 'echo ''module.exports = { extends: ["@commitlint/config-conventional"] };'' > commitlint.config.cjs'
+    - npm install -g @commitlint/cli @commitlint/config-conventional
+    - git fetch origin ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    - git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+    - commitlint --from=origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} --to=origin/${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
 
-# test:
-#   stage: test
-#   image: golang
-#   only:
-#     - merge_request
-#   extends:
-#     - .test
-#   script:
-#     - make test
+lint:
+  stage: test
+  only:
+    - merge_request
+  script:
+    - npm run lint
 
-# coverage:
-#   stage: test
-#   image: golang
-#   only:
-#     - merge_request
-#     - main
-#   extends:
-#     - .test
-#   script:
-#     - go get golang.org/x/tools/cmd/cover
-#     - go get github.com/t-yuki/gocover-cobertura
-#     - go get -u github.com/jstemmer/go-junit-report
-#     - make coverage 2>&1 | go-junit-report > junit.xml
-#     - gocover-cobertura < coverage.out > cobertura.xml
-#   after_script:
-#     - cat junit.xml | grep "coverage.statements.pct"
-#   coverage: '/value="\d+.\d+"/'
-#   artifacts:
-#     when: always
-#     reports:
-#       junit: junit.xml
-#       cobertura: cobertura.xml
+types:check:
+  stage: test
+  only:
+    - merge_request
+  script:
+    - npm run types:check
+  allow_failure: true
 
-# lint:commits:
-#   image: node
-#   stage: test
-#   only:
-#     - merge_request
-#   before_script: []
-#   script:
-#     - 'echo ''module.exports = { extends: ["@commitlint/config-conventional"] };'' > commitlint.config.js'
-#     - npm install -g @commitlint/cli @commitlint/config-conventional
-#     - git fetch origin ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
-#     - git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
-#     - commitlint --from=origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} --to=origin/${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+format:
+  stage: test
+  only:
+    - merge_request
+  script:
+    - npm run format:check
 
-# lint:code-quality:
-#   stage: test
-#   only:
-#     - merge_request
-#     - main
-#   before_script:
-#     - apt update && apt install jq -y
-#     - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.32.2
-#   script:
-#     - make code-quality | tee gl-code-quality-report.json | jq -r '.[] | "\(.location.path):\(.location.lines.begin) \(.description)"'
-#   artifacts:
-#     when: always
-#     reports:
-#       codequality: gl-code-quality-report.json
+test:
+  stage: test
+  only:
+    - merge_request
+  script:
+    - npm run test -- --passWithNoTests
 
-# lint:SAST:
-#   stage: test
-#   only:
-#     - merge_request
-#   script:
-#     - go get github.com/securego/gosec/v2/cmd/gosec
-#     - make sast
-
-# trigger:e2e:tests:
-#   stage: post
-#   only:
-#     - main
-#   script:
-#     - curl -X POST -F token=$BANTER_BUS_TESTS_CI_TRIGGER_TOKEN  -F "variables[SOURCE_TRIGGER]=banter-bus-core-api" -F "variables[DEPLOY_COMMIT]=$CI_COMMIT_SHA" -F ref=main https://gitlab.com/api/v4/projects/28716097/trigger/pipeline
+trigger:e2e:tests:
+  stage: post
+  only:
+    - main
+  script:
+    - curl -X POST -F token=$BANTER_BUS_TESTS_CI_TRIGGER_TOKEN  -F "variables[SOURCE_TRIGGER]=banter-bus-core-api" -F "variables[DEPLOY_COMMIT]=$CI_COMMIT_SHA" -F ref=main https://gitlab.com/api/v4/projects/28716097/trigger/pipeline

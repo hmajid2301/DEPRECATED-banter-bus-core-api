@@ -1,0 +1,16 @@
+app:
+  logLevel: DEBUG
+  environment: development
+database:
+  host: banter-bus-database
+  port: 27017
+  user: banterbus
+  password: banterbus
+  name: banterbus
+  authDB: admin
+webserver:
+  cors: ['http://localhost:3000']
+  port: 8080
+managementAPI:
+  port: 8090
+  url: http://localhost
