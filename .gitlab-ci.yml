@@ -54,9 +54,8 @@ lint:commits:
   only:
     - merge_request
   before_script: []
-  allow_failure: true
   script:
-    - 'echo ''module.exports = { extends: ["@commitlint/config-conventional"] };'' > commitlint.config.cjs'
+    - 'echo ''module.exports = { extends: ["@commitlint/config-conventional"] };'' > commitlint.config.js'
     - npm install -g @commitlint/cli @commitlint/config-conventional
     - git fetch origin ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
     - git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
@@ -75,7 +74,6 @@ types:check:
     - merge_request
   script:
     - npm run types:check
-  allow_failure: true
 
 format:
   stage: test

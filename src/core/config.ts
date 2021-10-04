@@ -1,6 +1,6 @@
 import convict from 'convict';
 import { url } from 'convict-format-with-validator';
-import yaml from 'yaml';
+import yaml from 'js-yaml';
 
 convict.addFormat(url);
 
