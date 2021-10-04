@@ -12,6 +12,8 @@ module.exports = {
     'plugin:prettier/recommended',
     'prettier',
     'prettier/@typescript-eslint',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -38,7 +40,12 @@ module.exports = {
     '@typescript-eslint/no-useless-constructor': 'error',
   },
   settings: {
+    'import/extensions': ['.js', '.ts'],
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts'],
+    },
     'import/resolver': {
+      typescript: {},
       node: {
         extensions: ['.js', '.ts'],
       },

@@ -29,7 +29,9 @@
     "inversify": "5.0.1",
     "inversify-agenda": "1.1.0",
     "js-yaml": "^4.1.0",
+    "module-alias": "^2.2.2",
     "mongoose": "6.0.4",
+    "pino": "^7.0.0-rc.8",
     "reflect-metadata": "0.1.13",
     "socket.io": "^4.2.0",
     "uuid": "3.3.3",
@@ -52,7 +54,8 @@
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-config-prettier": "6.7.0",
-    "eslint-plugin-import": "2.19.1",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-prettier": "3.1.2",
     "husky": "3.1.0",
     "jest": "24.9.0",
@@ -74,5 +77,8 @@
       "npm run lint:fix",
       "npm run format"
     ]
+  },
+  "_moduleAliases": {
+    "~": "dist/src"
   }
 }

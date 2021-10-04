@@ -83,7 +83,4 @@ const config = convict({
   },
 });
 
-config.loadFile('config.yml');
-config.validate({ allowed: 'strict' });
-
-export default config;
+export { config };
