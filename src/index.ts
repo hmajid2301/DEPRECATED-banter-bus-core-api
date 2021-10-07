@@ -9,6 +9,7 @@ function main() {
   config.loadFile(configFilePath);
   config.validate({ allowed: 'strict' });
   logger = UpdateLogLevel(logger, config.get('app.logLevel'));
+  console.log('Logger', logger);
 
   const httpServer = createServer();
   const io = new Server(httpServer, {});

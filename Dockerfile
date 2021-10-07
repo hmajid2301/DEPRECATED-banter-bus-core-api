@@ -1,6 +1,3 @@
-# example build:
-# docker build -t myapp -f Dockerfile.prod . --build-arg DB_ENDPOINT=mongodb://<ip address>:27017/myapp
-
 FROM node:12-buster
 
 RUN apt update && apt install -y tini
