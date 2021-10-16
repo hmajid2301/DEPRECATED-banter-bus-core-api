@@ -9,7 +9,6 @@ export interface Repository<T, _> {
   Delete(id: string): Promise<boolean>;
 }
 
-// TODO logging
 export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstructor<T>> implements Repository<T, U> {
   private model: ReturnModelType<U, T>;
 
@@ -18,6 +17,7 @@ export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstr
     if (authDB !== '') {
       uri += `?authSource=${authDB}`;
     }
+
     mongoose.connect(uri);
     this.model = getModelForClass(model);
   }

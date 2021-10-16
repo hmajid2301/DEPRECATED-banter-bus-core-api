@@ -5,11 +5,9 @@ services:
     container_name: banter-bus-core-api
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - 8080:8080
-    volumes:
-      - ${PWD}/src:/app/
     depends_on:
       - database
       - redis

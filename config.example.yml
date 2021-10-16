@@ -9,9 +9,8 @@ database:
   name: banterbus
   authDB: admin
 webserver:
-  cors: ["http://localhost:3000"]
+  cors: ['http://localhost:3000']
   port: 8080
-  url: http://localhost
-managementApi:
+managementAPI:
   port: 8090
   url: http://localhost
