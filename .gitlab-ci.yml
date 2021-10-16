@@ -36,8 +36,8 @@ install:dependencies:
 
 publish-docker:test:
   stage: pre
-  only:
-    - main
+  # only:
+  #   - main
   image: docker
   services:
     - docker:dind
