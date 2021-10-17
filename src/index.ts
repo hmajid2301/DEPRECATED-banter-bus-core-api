@@ -1,24 +1,29 @@
 import { createServer } from 'http';
+import 'reflect-metadata';
 import { Server, Socket } from 'socket.io';
+import { TSConvict } from 'ts-convict';
 
-import { config } from '~/core/config';
+import { Config } from '~/core/config/config';
 import { SetupLogger, UpdateLogLevel } from '~/core/logger';
+import { RoomController } from '~/rooms/room_controllers';
 
 function main() {
   let logger = SetupLogger();
+  const configLoader = new TSConvict<Config>(Config);
   const configFilePath = process.env.CONFIG_FILE_PATH ?? 'config.yml';
-  config.loadFile(configFilePath);
-  config.validate({ allowed: 'strict' });
-  logger = UpdateLogLevel(logger, config.get('app.logLevel'));
-  console.log('Logger', logger);
+  const config: Config = configLoader.load(configFilePath);
+  logger = UpdateLogLevel(logger, config.app.logLevel);
 
   const httpServer = createServer();
   const io = new Server(httpServer, {});
+
   io.on('connection', (socket: Socket) => {
-    console.log('TEST', socket);
+    const roomController = new RoomController(config, logger, socket);
+    socket.on('CREATE_ROOM', roomController.CreateRoom);
   });
 
-  httpServer.listen(3000);
+  logger.info(`Banter Bus Core API started on 0.0.0.0:${config.webserver.port}`);
+  httpServer.listen(config.webserver.port, '0.0.0.0');
 }
 
 main();

@@ -22,7 +22,9 @@
     "js-yaml": "^4.1.0",
     "mongoose": "^6.0.11",
     "pino": "^7.0.2",
+    "reflect-metadata": "^0.1.13",
     "socket.io": "^4.3.0",
+    "ts-convict": "^1.1.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

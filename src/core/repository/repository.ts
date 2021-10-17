@@ -3,7 +3,7 @@ import { AnyParamConstructor } from '@typegoose/typegoose/lib/types';
 import { FilterQuery } from 'mongoose';
 
 export interface Repository<T, _> {
-  Create(doc: T): void;
+  Create(doc: T): Promise<T>;
   Get(id: string): Promise<T | null>;
   Update(id: string, doc: T): Promise<boolean>;
   Delete(id: string): Promise<boolean>;
@@ -22,11 +22,11 @@ export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstr
     this.model = getModelForClass(model);
   }
 
-  public async Create(doc: T): Promise<void> {
+  public async Create(doc: T): Promise<T> {
     return new Promise((resolve, reject) => {
       this.model
         .create(doc)
-        .then(() => resolve())
+        .then((result) => resolve(result))
         .catch((err) => reject(err));
     });
   }

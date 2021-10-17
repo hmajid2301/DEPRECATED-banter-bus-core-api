@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { GameState } from './room_models';
+import { GameState, Room } from './room_models';
 import { RoomRepository } from './room_repository';
 import { GameApi } from '~/clients/management_api/';
 
@@ -23,7 +23,7 @@ export class RoomService {
     this.gameAPI = new GameApi(undefined, managementAPIBase);
   }
 
-  public async Add(gameName: string) {
+  public async Create(gameName: string): Promise<Room> {
     const validGame = await this.isValidGame(gameName);
     if (!validGame) {
       throw new Error(`game ${gameName} is not valid`);
@@ -33,7 +33,7 @@ export class RoomService {
     const roomID = uuidv4();
     const createdAt = new Date();
 
-    this.roomRepo.Create({
+    const room = await this.roomRepo.Create({
       id: roomID,
       gameName,
       roomCode,
@@ -42,6 +42,7 @@ export class RoomService {
       createdAt,
       updatedAt: createdAt,
     });
+    return room;
   }
 
   private async getRoomCode(): Promise<string> {
