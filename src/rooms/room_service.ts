@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { GameState } from './room_models';
 import { RoomRepository } from './room_repository';
-
 import { GameApi } from '~/clients/management_api/';
 
 export class RoomService {

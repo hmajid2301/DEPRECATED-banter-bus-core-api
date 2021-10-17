@@ -9,10 +9,9 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'prettier',
     'plugin:import/recommended',
     'plugin:import/typescript',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -26,17 +25,6 @@ module.exports = {
     'import/namespace': 'error',
     'import/default': 'error',
     'import/export': 'error',
-    'import/order': [
-      'error',
-      {
-        groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
-        'newlines-between': 'always',
-        alphabetize: {
-          order: 'asc',
-        },
-      },
-    ],
-    'prettier/prettier': 'error',
     'import/extensions': [
       'error',
       'ignorePackages',

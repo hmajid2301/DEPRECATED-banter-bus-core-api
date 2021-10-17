@@ -1,5 +1,4 @@
 import { GameState, Room } from './room_models';
-
 import { BaseRepository } from '~/core/repository/repository';
 
 export class RoomRepository extends BaseRepository<Room> {

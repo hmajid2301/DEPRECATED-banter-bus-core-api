@@ -26,6 +26,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^2.0.4",
     "@types/axios": "^0.14.0",
     "@types/convict": "^6.1.1",
     "@types/convict-format-with-validator": "^6.0.2",
@@ -43,7 +44,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.0",
     "jest": "^27.2.4",
     "lint-staged": "^11.0.1",
