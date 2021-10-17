@@ -10,7 +10,7 @@ export interface Repository<T, _> {
 }
 
 export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstructor<T>> implements Repository<T, U> {
-  private model: ReturnModelType<U, T>;
+  protected model: ReturnModelType<U, T>;
 
   constructor(model: U, username: string, password: string, host: string, port: number, dbName: string, authDB = '') {
     let uri = `mongodb://${username}:${password}@${host}:${port}/${dbName}`;

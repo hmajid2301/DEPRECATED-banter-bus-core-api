@@ -62,6 +62,10 @@ format-fix:  ## Formats the code automatically.
 	@npm run format:fix
 
 
+.PHONY: types-check
+types-check:  ## Checks the types of the project.
+	@npm run types:check
+
 .PHONY: test
 test:  ## Runs all the tests.
 	@npm run test
