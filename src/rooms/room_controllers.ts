@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 
 import { CreateRoom, RoomCreated } from './room_api_models';
 import { RoomService } from './room_service';
-import { Config } from '~/core/config/config';
 import { ErrorMessage } from '~/types';
 
 export class RoomController {
@@ -13,14 +12,18 @@ export class RoomController {
 
   private socket: Socket;
 
-  constructor(config: Config, logger: pino.Logger, socket: Socket) {
-    const { username, password, host, port, name, authDB } = config.database;
-    let managementAPIBase: string = config.managementAPI.url;
-    if (config.managementAPI.port) {
-      managementAPIBase += `:${config.managementAPI.port}`;
-    }
-
-    const roomService = new RoomService(username, password, host, port, name, authDB, managementAPIBase);
+  constructor(
+    username: string,
+    password: string,
+    host: string,
+    port: number,
+    dbName: string,
+    authDB: string,
+    managementAPIBase: string,
+    logger: pino.Logger,
+    socket: Socket,
+  ) {
+    const roomService = new RoomService(username, password, host, port, dbName, authDB, managementAPIBase);
     this.roomService = roomService;
     this.logger = logger;
     this.socket = socket;

@@ -7,26 +7,27 @@ export class RoomRepository extends BaseRepository<Room> {
   }
 
   public async GetAllRoomCodes(): Promise<string[]> {
+    interface RoomCode {
+      roomCodes: string[];
+    }
+
     const pipeline = [
       {
         $match: { state: { $nin: [GameState.FINISHED, GameState.ABANDONED] } },
       },
       {
-        $project: { $item: 1, field: { $ifNull: ['room_code', ''] } },
-      },
-      {
         $group: {
           _id: '_id',
-          temp: { addToSet: 'room_code' },
+          roomCodes: { $addToSet: '$roomCode' },
         },
       },
-      { unset: ['_id'] },
+      { $unset: '_id' },
     ];
 
     return new Promise((resolve, reject) => {
       this.model
         .aggregate(pipeline)
-        .then((result) => resolve(result))
+        .then((result: RoomCode[]) => resolve(result[0].roomCodes))
         .catch((err) => reject(err));
     });
   }

@@ -37,7 +37,6 @@ export class RoomService {
       id: roomID,
       gameName,
       roomCode,
-      players: [],
       state: GameState.CREATED,
       createdAt,
       updatedAt: createdAt,

@@ -15,6 +15,6 @@
       "~/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/core/config/types.d.ts"],
-  "exclude": ["node_modules/", "src/**/*.test.ts", "src/clients/**/*"]
+  "include": ["src/**/*.ts", "src/core/config/types.d.ts", "src/types.d.ts", "tests/types/**.d.ts"],
+  "exclude": ["node_modules/", "src/clients/**/*"]
 }

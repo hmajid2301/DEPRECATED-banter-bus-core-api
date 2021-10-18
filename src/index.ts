@@ -17,8 +17,24 @@ function main() {
   const httpServer = createServer();
   const io = new Server(httpServer, {});
 
+  const { username, password, host, port, name, authDB } = config.database;
+  let managementAPIBase: string = config.managementAPI.url;
+  if (config.managementAPI.port) {
+    managementAPIBase += `:${config.managementAPI.port}`;
+  }
+
   io.on('connection', (socket: Socket) => {
-    const roomController = new RoomController(config, logger, socket);
+    const roomController = new RoomController(
+      username,
+      password,
+      host,
+      port,
+      name,
+      authDB,
+      managementAPIBase,
+      logger,
+      socket,
+    );
     socket.on('CREATE_ROOM', roomController.CreateRoom);
   });
 

@@ -18,8 +18,8 @@ export class Room {
   @prop({ required: true })
   public roomCode!: string;
 
-  @prop({ required: false })
-  public players!: string[];
+  @prop({ required: true, type: String, default: [] })
+  public players?: string[];
 
   @prop({ required: true })
   public state!: GameState;
