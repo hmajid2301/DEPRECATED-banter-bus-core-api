@@ -1,4 +1,5 @@
 import { createServer } from 'http';
+import 'module-alias/register';
 import 'reflect-metadata';
 import { Server, Socket } from 'socket.io';
 import { TSConvict } from 'ts-convict';

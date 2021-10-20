@@ -5,7 +5,7 @@ import { Config as Conf, Property } from 'ts-convict';
 class Database implements config.Database {
   @Property({
     doc: 'Database host name/IP',
-    format: 'string',
+    format: String,
     env: 'DATABASE_HOST',
     default: 'banterbus',
   })
@@ -56,8 +56,8 @@ class Database implements config.Database {
 class App implements config.AppConfig {
   @Property({
     doc: 'The application environment.',
-    format: ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-    default: 'INFO',
+    format: ['debug', 'info', 'warning', 'error', 'critical'],
+    default: 'info',
     env: 'LOG_LEVEL',
   })
   public logLevel!: string;

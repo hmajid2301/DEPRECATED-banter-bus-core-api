@@ -1,10 +1,10 @@
 app:
-  logLevel: DEBUG
+  logLevel: debug
   environment: development
 database:
   host: banter-bus-database
   port: 27017
-  user: banterbus
+  username: banterbus
   password: banterbus
   name: banterbus
   authDB: admin
