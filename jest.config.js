@@ -2,8 +2,8 @@ module.exports = {
   rootDir: __dirname,
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/__tests__/**/*.test.ts'],
   collectCoverageFrom: ['src/**/*.ts'],
+  testPathIgnorePatterns: ['node_modules', 'dist'],
   coverageReporters: ['text', 'text-summary', 'cobertura'],
   coveragePathIgnorePatterns: ['<rootDir>/src/clients'],
   moduleNameMapper: {

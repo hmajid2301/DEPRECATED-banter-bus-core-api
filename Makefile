@@ -67,11 +67,16 @@ types-check:  ## Checks the types of the project.
 	@npm run types:check
 
 
-.PHONY: test
-test:  ## Runs all the tests.
-	@npm run test
+.PHONY: test-unit
+test-unit:  ## Runs all the unit tests.
+	@npm run test -- src
+
+
+.PHONY: test-integration
+test-integration:  ## Runs all the integration tests.
+	@npm run test -- tests/ --forceExit
 
 
 .PHONY: coverage
 coverage:  ## Runs all the tests with a test coverage report.
-	@npm run coverage
+	@npm run coverage -- --forceExit

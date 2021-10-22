@@ -27,7 +27,12 @@ export class RoomRepository extends BaseRepository<Room> {
     return new Promise((resolve, reject) => {
       this.model
         .aggregate(pipeline)
-        .then((result: RoomCode[]) => resolve(result[0].roomCodes))
+        .then((result: RoomCode[]) => {
+          if (result.length) {
+            resolve(result[0].roomCodes);
+          }
+          resolve([]);
+        })
         .catch((err) => reject(err));
     });
   }

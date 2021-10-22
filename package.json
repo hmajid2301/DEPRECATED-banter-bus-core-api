@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "start": "ts-node src/index.ts",
     "test": "jest",
-    "coverage": "jest --config --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --watchAll=false",
+    "coverage": "jest --config --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit",
     "lint": "eslint \"src/**/*.{ts,js}\"",
     "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
     "format": "prettier --write \"src/**/*.{ts,js}\"",
@@ -27,6 +27,7 @@
     "pino": "^7.0.2",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.3.0",
+    "socket.io-client": "^4.3.2",
     "ts-convict": "^1.1.0",
     "uuid": "^8.3.2"
   },

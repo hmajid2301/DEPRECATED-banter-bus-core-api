@@ -20,6 +20,28 @@ cache:
 before_script:
   - npm ci --cache .npm --prefer-offline
 
+.test:
+  services:
+    - name: mongo:4.4.4
+      alias: banter-bus-database
+    - name: registry.gitlab.com/banter-bus/banter-bus-gui:test
+      alias: banter-bus-gui
+    - name: registry.gitlab.com/banter-bus/banter-bus-core-api:test
+      alias: banter-bus-core-api
+    - name: registry.gitlab.com/banter-bus/banter-bus-management-api:test
+      alias: banter-bus-management-api
+    - name: registry.gitlab.com/banter-bus/banter-bus-tests/database-seed:latest
+      alias: banter-bus-database-seed
+  variables:
+    BANTER_BUS_DB_HOST: 'banter-bus-database'
+    BANTER_BUS_WEBSERVER_PORT: 8090
+    MONGO_INITDB_ROOT_USERNAME: 'banterbus'
+    MONGO_INITDB_ROOT_PASSWORD: 'banterbus'
+    MONGO_INITDB_DATABASE: 'banterbus'
+    MONGO_HOSTNAME: banter-bus-database:27017
+    BANTER_BUS_MANAGEMENT_API_BASE_URL: 'http://banter-bus-management-api'
+    FF_NETWORK_PER_BUILD: 1
+
 install:dependencies:
   stage: pre
   only:
@@ -66,36 +88,46 @@ lint:
   only:
     - merge_request
   script:
-    - npm run lint
+    - make lint
 
 types:check:
   stage: test
   only:
     - merge_request
   script:
-    - npm run types:check
+    - make types-check
 
 format:
   stage: test
   only:
     - merge_request
   script:
-    - npm run format:check
+    - make format
 
-test:
+test:unit:
   stage: test
   only:
     - merge_request
   script:
-    - npm run test
+    - make test-unit
 
+test:integration:
+  stage: test
+  only:
+    - merge_request
+  extends:
+    - .test
+  script:
+    - make test-integration
 coverage:
   stage: test
   only:
     - main
     - merge_request
+  extends:
+    - .test
   script:
-    - npm run coverage
+    - make coverage
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   artifacts:
     when: always

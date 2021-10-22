@@ -64,7 +64,7 @@ class App implements config.AppConfig {
 
   @Property({
     doc: 'The application environment.',
-    format: ['production', 'development'],
+    format: ['production', 'development', 'test'],
     default: 'development',
     env: 'NODE_ENV',
   })
