@@ -71,18 +71,6 @@ publish-docker:test:
     - docker push ${CI_REGISTRY_IMAGE}:test
     - docker push ${CI_REGISTRY_IMAGE}:e2e
 
-lint:commits:
-  stage: test
-  only:
-    - merge_request
-  before_script: []
-  script:
-    - 'echo ''module.exports = { extends: ["@commitlint/config-conventional"] };'' > commitlint.config.js'
-    - npm install -g @commitlint/cli @commitlint/config-conventional
-    - git fetch origin ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
-    - git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
-    - commitlint --from=origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} --to=origin/${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
-
 lint:
   stage: test
   only:
