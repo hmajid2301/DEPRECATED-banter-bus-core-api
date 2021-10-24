@@ -45,7 +45,11 @@ export function setupServer(io: Server<DefaultEventsMap, DefaultEventsMap, Defau
 
 function main() {
   const httpServer = createServer();
-  const io = new Server(httpServer, {});
+  const io = new Server(httpServer, {
+    cors: {
+      origin: true,
+    },
+  });
   setupServer(io, httpServer);
 }
 
