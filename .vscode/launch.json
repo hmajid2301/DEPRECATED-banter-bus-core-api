@@ -23,13 +23,18 @@
       "port": 9229
     },
     {
+      "name": "Debug App",
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/src/index.ts",
-      "sourceMaps": true,
-      "trace": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "outputCapture": "std",
+      "env": {
+        "MANAGEMENT_API_URL": "http://localhost",
+        "MANAGEMENT_API_PORT": "8090",
+        "DATABASE_HOST": "localhost"
+      }
     }
   ]
 }

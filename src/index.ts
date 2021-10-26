@@ -23,6 +23,7 @@ export function setupServer(io: Server<DefaultEventsMap, DefaultEventsMap, Defau
   }
 
   io.on('connection', (socket: Socket) => {
+    logger.debug('New client connected');
     const roomController = new RoomController(
       username,
       password,
@@ -34,6 +35,7 @@ export function setupServer(io: Server<DefaultEventsMap, DefaultEventsMap, Defau
       logger,
       socket,
     );
+
     socket.on('CREATE_ROOM', (data) => {
       roomController.CreateRoom(data);
     });
