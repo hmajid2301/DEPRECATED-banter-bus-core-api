@@ -6,7 +6,7 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { TSConvict } from 'ts-convict';
 
 import { Config } from '~/core/config/config';
-import { SetupLogger, UpdateLogLevel } from '~/core/logger';
+import { SetupLogger, UpdateLogLevel } from '~/core/logger/logger';
 import { RoomController } from '~/rooms/room_controllers';
 
 export function setupServer(io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>, httpServer: HTTPServer) {

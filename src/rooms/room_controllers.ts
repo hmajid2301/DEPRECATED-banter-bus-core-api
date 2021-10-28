@@ -1,4 +1,4 @@
-import pino from 'pino';
+import bunyan from 'bunyan';
 import { Socket } from 'socket.io';
 
 import { CreateRoom, RoomCreated } from './room_api_models';
@@ -8,7 +8,7 @@ import { ErrorMessage } from '~/types';
 export class RoomController {
   private roomService: RoomService;
 
-  private logger: pino.Logger;
+  private logger: bunyan;
 
   private socket: Socket;
 
@@ -20,7 +20,7 @@ export class RoomController {
     dbName: string,
     authDB: string,
     managementAPIBase: string,
-    logger: pino.Logger,
+    logger: bunyan,
     socket: Socket,
   ) {
     const roomService = new RoomService(username, password, host, port, dbName, authDB, managementAPIBase);
@@ -41,7 +41,7 @@ export class RoomController {
       this.socket.emit('ROOM_CREATED', roomCreated);
       this.logger.debug('Sending `ROOM_CREATED` message');
     } catch (err) {
-      this.logger.error(`Failed to create a new room ${err}`);
+      this.logger.error('Failed to create a new room', { err });
       const error: ErrorMessage = {
         code: 'room_created_failure',
         message: 'Failed to create room',

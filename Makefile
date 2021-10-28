@@ -29,7 +29,7 @@ start-deps: ## Start all the docker containers that this app needs as dependenci
 
 
 .PHONY: dev
-dev: ## Start the development server
+dev: build ## Start the development server
 	@npm run dev
 
 

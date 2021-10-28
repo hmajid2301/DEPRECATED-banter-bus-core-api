@@ -3,7 +3,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { RoomController } from '../room_controllers';
 import { GameState, Room } from '../room_models';
 import { RoomService } from '../room_service';
-import { SetupLogger } from '~/core/logger';
+import { SetupLogger } from '~/core/logger/logger';
 
 describe('Room Controller', () => {
   let roomController: RoomController;
