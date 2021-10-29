@@ -51,12 +51,17 @@ describe('Room Repository', () => {
     }
   });
 
+  test('Get a room that does not exist', async () => {
+    const room = await roomRepository.Get('id-not-exist');
+    expect(room).toBe(undefined);
+  });
+
   test('Update a room ', async () => {
     const roomToCreate = roomFactory.build();
     const createdRoom = await roomRepository.Create(roomToCreate);
 
     const createdAt = new Date();
-    const room = (await roomRepository.Update(createdRoom.id, {
+    const roomToUpdate: Room = {
       id: 'abc',
       gameName: 'quibly',
       roomCode: 'ABCDF',
@@ -64,7 +69,8 @@ describe('Room Repository', () => {
       players: ['haseeb', 'majid'],
       createdAt,
       updatedAt: createdAt,
-    })) as Room;
+    };
+    const room = (await roomRepository.Update(createdRoom.id, roomToUpdate)) as Room;
 
     expect(room.id).toBe('abc');
     expect(room.gameName).toBe('quibly');
@@ -75,12 +81,33 @@ describe('Room Repository', () => {
     }
   });
 
+  test('Update a room that does not exist', async () => {
+    const createdAt = new Date();
+    const roomToUpdate: Room = {
+      id: 'abc',
+      gameName: 'quibly',
+      roomCode: 'ABCDF',
+      state: GameState.JOINING,
+      players: ['haseeb', 'majid'],
+      createdAt,
+      updatedAt: createdAt,
+    };
+
+    const room = (await roomRepository.Update('does-not-exist', roomToUpdate)) as Room;
+    expect(room).toBe(undefined);
+  });
+
   test('Delete a room ', async () => {
     const roomToCreate = roomFactory.build();
     const createdRoom = await roomRepository.Create(roomToCreate);
 
     await roomRepository.Delete(createdRoom.id);
     const room = await roomRepository.Get(createdRoom.id);
+    expect(room).toBe(undefined);
+  });
+
+  test('Delete a room that does not exist', async () => {
+    const room = await roomRepository.Delete('does-not-exist');
     expect(room).toBe(undefined);
   });
 

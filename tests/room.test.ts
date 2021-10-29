@@ -6,6 +6,7 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 import { setupServer } from '~/index';
 import { CreateRoom, RoomCreated } from '~/rooms/room_api_models';
+import { ErrorMessage } from '~/types';
 
 describe('Room Integration Tests', () => {
   let socketServer: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>;
@@ -42,6 +43,19 @@ describe('Room Integration Tests', () => {
 
       expect(roomCode).toMatch(/^[A-Z]{0,5}$/);
       expect(roomID).toBeTruthy();
+    });
+  });
+
+  test('Fail to create a new room', () => {
+    const createdRoom: CreateRoom = {
+      gameName: 'quibly',
+    };
+
+    clientSocket.emit('CREATE_ROOM', createdRoom);
+    clientSocket.on('ERROR', (error: ErrorMessage) => {
+      const { code, message } = error;
+      expect(code).toBe('room_created_failure');
+      expect(message).toBe('Failed to create room');
     });
   });
 });
