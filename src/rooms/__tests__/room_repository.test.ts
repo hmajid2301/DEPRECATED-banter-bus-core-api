@@ -1,3 +1,4 @@
+import roomFactory from '../../../tests/factories/room';
 import { GameState, Room } from '../room_models';
 import { RoomRepository } from '../room_repository';
 
@@ -24,19 +25,12 @@ describe('Room Repository', () => {
   });
 
   test('Create a room ', async () => {
-    const createdAt = new Date();
-    const room = await roomRepository.Create({
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    });
+    const roomToCreate = roomFactory.build();
+    const room = await roomRepository.Create(roomToCreate);
 
-    expect(room.id).toBe('abc');
-    expect(room.gameName).toBe('fibbing_it');
-    expect(room.roomCode).toBe('ABCDE');
+    expect(room.id).toBe(roomToCreate.id);
+    expect(room.gameName).toBe(roomToCreate.gameName);
+    expect(room.roomCode).toBe(roomToCreate.roomCode);
     expect(room.state).toBe(GameState.CREATED);
     if (room.players) {
       expect(room.players.length).toBe(0);
@@ -44,20 +38,13 @@ describe('Room Repository', () => {
   });
 
   test('Get a room ', async () => {
-    const createdAt = new Date();
-    const createdRoom = await roomRepository.Create({
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    });
+    const roomToCreate = roomFactory.build();
+    const createdRoom = await roomRepository.Create(roomToCreate);
 
     const room = (await roomRepository.Get(createdRoom.id)) as Room;
-    expect(room.id).toBe('abc');
-    expect(room.gameName).toBe('fibbing_it');
-    expect(room.roomCode).toBe('ABCDE');
+    expect(room.id).toBe(roomToCreate.id);
+    expect(room.gameName).toBe(roomToCreate.gameName);
+    expect(room.roomCode).toBe(roomToCreate.roomCode);
     expect(room.state).toBe(GameState.CREATED);
     if (room.players) {
       expect(room.players.length).toBe(0);
@@ -65,16 +52,10 @@ describe('Room Repository', () => {
   });
 
   test('Update a room ', async () => {
-    const createdAt = new Date();
-    const createdRoom = await roomRepository.Create({
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    });
+    const roomToCreate = roomFactory.build();
+    const createdRoom = await roomRepository.Create(roomToCreate);
 
+    const createdAt = new Date();
     const room = (await roomRepository.Update(createdRoom.id, {
       id: 'abc',
       gameName: 'quibly',
@@ -95,15 +76,8 @@ describe('Room Repository', () => {
   });
 
   test('Delete a room ', async () => {
-    const createdAt = new Date();
-    const createdRoom = await roomRepository.Create({
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    });
+    const roomToCreate = roomFactory.build();
+    const createdRoom = await roomRepository.Create(roomToCreate);
 
     await roomRepository.Delete(createdRoom.id);
     const room = await roomRepository.Get(createdRoom.id);
@@ -111,27 +85,14 @@ describe('Room Repository', () => {
   });
 
   test('Get all room codes', async () => {
-    const createdAt = new Date();
-    await roomRepository.Create({
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    });
-
-    await roomRepository.Create({
-      id: 'dhashdi',
-      gameName: 'fibbing_it',
-      roomCode: 'FFFFF',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
+    const rooms = roomFactory.buildList(3);
+    const expectedCodes: string[] = [];
+    rooms.forEach(async (room) => {
+      await roomRepository.Create(room);
+      expectedCodes.push(room.roomCode);
     });
 
     const roomCodes = await roomRepository.GetAllRoomCodes();
-    const expectedCodes = ['FFFFF', 'ABCDE'];
     expect(roomCodes.sort()).toEqual(expectedCodes.sort());
   });
 });

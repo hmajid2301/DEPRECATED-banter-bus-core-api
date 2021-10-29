@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
-import { v4 as uuidv4 } from 'uuid';
 
-import { GameState, Room } from '../room_models';
+import roomFactory from '../../../tests/factories/room';
+import { GameState } from '../room_models';
 import { RoomRepository } from '../room_repository';
 import { RoomService } from '../room_service';
 import { GameApi } from '~/clients/management_api';
@@ -31,19 +31,11 @@ describe('Room Service', () => {
     const usedRoomCodes = ['FFFFF'];
     jest.spyOn(RoomRepository.prototype, 'GetAllRoomCodes').mockImplementation(() => Promise.resolve(usedRoomCodes));
 
-    const createdAt = new Date();
-    const room: Room = {
-      id: uuidv4(),
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    };
+    const room = roomFactory.build({ gameName: 'fibbing_it' });
     jest.spyOn(RoomRepository.prototype, 'Create').mockImplementation(() => Promise.resolve(room));
 
-    const createdRoom = await roomService.Create('fibbing_it');
-    expect(createdRoom.gameName).toBe('fibbing_it');
+    const createdRoom = await roomService.Create(room.gameName);
+    expect(createdRoom.gameName).toBe(room.gameName);
     expect(createdRoom.roomCode).not.toBe('FFFFF');
     expect(createdRoom.state).toBe(GameState.CREATED);
   });

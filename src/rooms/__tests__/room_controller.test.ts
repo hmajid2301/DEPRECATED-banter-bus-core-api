@@ -1,7 +1,7 @@
 import MockedServerSocket from 'socket.io-mock';
 
+import roomFactory from '../../../tests/factories/room';
 import { RoomController } from '../room_controllers';
-import { GameState, Room } from '../room_models';
 import { RoomService } from '../room_service';
 import { SetupLogger } from '~/core/logger/logger';
 
@@ -25,15 +25,7 @@ describe('Room Controller', () => {
   });
 
   test('Create a room ', async () => {
-    const createdAt = new Date();
-    const room: Room = {
-      id: 'abc',
-      gameName: 'fibbing_it',
-      roomCode: 'ABCDE',
-      state: GameState.CREATED,
-      createdAt,
-      updatedAt: createdAt,
-    };
+    const room = roomFactory.build();
 
     jest.spyOn(RoomService.prototype, 'Create').mockImplementation(() => Promise.resolve(room));
     await roomController.CreateRoom({ gameName: 'fibbing_it' });
