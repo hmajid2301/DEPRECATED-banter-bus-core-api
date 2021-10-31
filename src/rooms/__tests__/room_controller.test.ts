@@ -3,6 +3,7 @@ import MockedServerSocket from 'socket.io-mock';
 import roomFactory from '../../../tests/factories/room';
 import { RoomCreated } from '../room_api_models';
 import { RoomController } from '../room_controllers';
+import { RoomRepository } from '../room_repository';
 import { RoomService } from '../room_service';
 import { SetupLogger } from '~/core/logger/logger';
 import { ErrorMessage } from '~/types';
@@ -13,18 +14,19 @@ describe('Room Controller', () => {
 
   beforeAll(() => {
     const logger = SetupLogger();
+    const { username, password, host, port, name, authDB } = {
+      username: 'mongodb-memory-server-root',
+      password: 'rootuser',
+      host: 'localhost',
+      port: 5133,
+      name: 'banterbus',
+      authDB: 'admin',
+    };
+
+    const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
+    const roomService = new RoomService(roomRepository, 'http://localhost');
     socket = new MockedServerSocket();
-    roomController = new RoomController(
-      'mongodb-memory-server-root',
-      'rootuser',
-      'localhost',
-      5133,
-      'banterbus',
-      'admin',
-      'http://localhost',
-      logger,
-      socket.socketClient,
-    );
+    roomController = new RoomController(roomService, logger, socket.socketClient);
   });
 
   test('Create a room ', async () => {

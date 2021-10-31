@@ -2,7 +2,38 @@ import { url } from 'convict-format-with-validator';
 import yaml from 'js-yaml';
 import { Config as Conf, Property } from 'ts-convict';
 
-class Database implements config.Database {
+export interface AppConfig {
+  environment: string;
+  logLevel: string;
+}
+
+export interface DatabaseConfig {
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  name: string;
+  authDB: string;
+}
+
+export interface WebServerConfig {
+  cors: string[];
+  port: number;
+}
+
+export interface ManagementAPIConfig {
+  port: number | null;
+  url: string;
+}
+
+export interface Config {
+  app: AppConfig;
+  database: DatabaseConfig;
+  webserver: WebServerConfig;
+  managementAPI: ManagementAPIConfig;
+}
+
+class Database implements DatabaseConfig {
   @Property({
     doc: 'Database host name/IP',
     format: String,
@@ -53,7 +84,7 @@ class Database implements config.Database {
   public authDB!: string;
 }
 
-class App implements config.AppConfig {
+class App implements AppConfig {
   @Property({
     doc: 'The application environment.',
     format: ['debug', 'info', 'warning', 'error', 'critical'],
@@ -71,7 +102,7 @@ class App implements config.AppConfig {
   public environment!: string;
 }
 
-class Webserver implements config.WebServerConfig {
+class Webserver implements WebServerConfig {
   @Property({
     doc: 'The clients that can access this server.',
     env: 'API_CORS',
@@ -90,7 +121,7 @@ class Webserver implements config.WebServerConfig {
   public port!: number;
 }
 
-class ManagementAPI implements config.ManagementAPIConfig {
+class ManagementAPI implements ManagementAPIConfig {
   @Property({
     doc: 'The port to connect to.',
     format: 'port',
@@ -120,16 +151,16 @@ class ManagementAPI implements config.ManagementAPIConfig {
     url,
   },
 })
-export class Config implements config.Config {
+export class Config implements Config {
   @Property(App)
-  public app!: config.AppConfig;
+  public app!: AppConfig;
 
   @Property(Database)
-  public database!: config.Database;
+  public database!: Database;
 
   @Property(Webserver)
-  public webserver!: config.WebServerConfig;
+  public webserver!: WebServerConfig;
 
   @Property(ManagementAPI)
-  public managementAPI!: config.ManagementAPIConfig;
+  public managementAPI!: ManagementAPIConfig;
 }

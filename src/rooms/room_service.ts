@@ -1,25 +1,23 @@
+import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GameState, Room } from './room_models';
-import { RoomRepository } from './room_repository';
+import { IRoomRepository } from './room_repository';
 import { GameApi } from '~/clients/management_api/';
+import { TYPES } from '~/container.types';
 
-export class RoomService {
-  private roomRepo: RoomRepository;
+export interface IRoomService {
+  Create(gameName: string): Promise<Room>;
+}
 
+@injectable()
+export class RoomService implements IRoomService {
   private gameAPI: GameApi;
 
   constructor(
-    username: string,
-    password: string,
-    host: string,
-    port: number,
-    dbName: string,
-    authDB: string,
+    @inject(TYPES.RoomRepository) private readonly _roomRepository: IRoomRepository,
     managementAPIBase: string,
   ) {
-    const roomRepo = new RoomRepository(username, password, host, port, dbName, authDB);
-    this.roomRepo = roomRepo;
     this.gameAPI = new GameApi(undefined, managementAPIBase);
   }
 
@@ -33,7 +31,7 @@ export class RoomService {
     const roomID = uuidv4();
     const createdAt = new Date();
 
-    const room = await this.roomRepo.Create({
+    const room = await this._roomRepository.Create({
       id: roomID,
       gameName,
       roomCode,
@@ -45,7 +43,7 @@ export class RoomService {
   }
 
   private async getRoomCode(): Promise<string> {
-    const unavailableRoomCodes = await this.roomRepo.GetAllRoomCodes();
+    const unavailableRoomCodes = await this._roomRepository.GetAllRoomCodes();
     let codeUsed = false;
     let roomCode: string;
 

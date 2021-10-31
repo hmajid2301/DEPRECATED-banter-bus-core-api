@@ -10,15 +10,17 @@ import { GameApi } from '~/clients/management_api';
 describe('Room Service', () => {
   let roomService: RoomService;
   beforeAll(() => {
-    roomService = new RoomService(
-      'mongodb-memory-server-root',
-      'rootuser',
-      'localhost',
-      5133,
-      'banterbus',
-      'admin',
-      'http://localhost',
-    );
+    const { username, password, host, port, name, authDB } = {
+      username: 'mongodb-memory-server-root',
+      password: 'rootuser',
+      host: 'localhost',
+      port: 5133,
+      name: 'banterbus',
+      authDB: 'admin',
+    };
+
+    const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
+    roomService = new RoomService(roomRepository, 'http://localhost');
   });
 
   test('Create a room ', async () => {

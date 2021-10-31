@@ -3,7 +3,7 @@ import { AnyParamConstructor } from '@typegoose/typegoose/lib/types';
 import { rejects } from 'assert';
 import { FilterQuery } from 'mongoose';
 
-export interface Repository<T, _> {
+export interface Repository<T> {
   Create(doc: T): Promise<T>;
   Get(id: string): Promise<T | null>;
   Update(id: string, doc: T): Promise<T | null>;
@@ -12,7 +12,7 @@ export interface Repository<T, _> {
   Clear(): Promise<void>;
 }
 
-export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstructor<T>> implements Repository<T, U> {
+export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstructor<T>> implements Repository<T> {
   protected model: ReturnModelType<U, T>;
 
   private dbConnection: Promise<typeof mongoose>;

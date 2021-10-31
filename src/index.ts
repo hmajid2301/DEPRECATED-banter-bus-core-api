@@ -1,10 +1,14 @@
 import { createServer, Server as HTTPServer } from 'http';
+import { Container } from 'inversify';
 import 'module-alias/register';
 import 'reflect-metadata';
 import { Server, Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { TSConvict } from 'ts-convict';
 
+import { TYPES } from './container.types';
+import { IRoomRepository, RoomRepository } from './rooms/room_repository';
+import { IRoomService, RoomService } from './rooms/room_service';
 import { Config } from '~/core/config/config';
 import { SetupLogger, UpdateLogLevel } from '~/core/logger/logger';
 import { RoomController } from '~/rooms/room_controllers';
@@ -22,19 +26,16 @@ export function setupServer(io: Server<DefaultEventsMap, DefaultEventsMap, Defau
     managementAPIBase += `:${config.managementAPI.port}`;
   }
 
+  const container = new Container();
+  const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
+  container.bind<IRoomRepository>(TYPES.RoomRepository).toConstantValue(roomRepository);
+
+  const roomService = new RoomService(roomRepository, managementAPIBase);
+  container.bind<IRoomService>(TYPES.RoomService).toConstantValue(roomService);
+
   io.on('connection', (socket: Socket) => {
     logger.debug('New client connected');
-    const roomController = new RoomController(
-      username,
-      password,
-      host,
-      port,
-      name,
-      authDB,
-      managementAPIBase,
-      logger,
-      socket,
-    );
+    const roomController = new RoomController(roomService, logger, socket);
 
     socket.on('CREATE_ROOM', (data) => {
       roomController.CreateRoom(data);

@@ -1,7 +1,14 @@
-import { GameState, Room } from './room_models';
-import { BaseRepository } from '~/core/repository/repository';
+import { injectable } from 'inversify';
 
-export class RoomRepository extends BaseRepository<Room> {
+import { GameState, Room } from './room_models';
+import { BaseRepository, Repository } from '~/core/repository/repository';
+
+export interface IRoomRepository extends Repository<Room> {
+  GetAllRoomCodes(): Promise<string[]>;
+}
+
+@injectable()
+export class RoomRepository extends BaseRepository<Room> implements IRoomRepository {
   constructor(username: string, password: string, host: string, port: number, dbName: string, authDB: string) {
     super(Room, username, password, host, port, dbName, authDB);
   }
