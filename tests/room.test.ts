@@ -1,26 +1,22 @@
 import { createServer, Server as HTTPServer } from 'http';
 import 'reflect-metadata';
-import { Server } from 'socket.io';
 import Client, { Socket } from 'socket.io-client';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 import { setupServer } from '~/index';
 import { CreateRoom, RoomCreated } from '~/rooms/room_api_models';
 import { ErrorMessage } from '~/types';
 
 describe('Room Integration Tests', () => {
-  let socketServer: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>;
   let httpServer: HTTPServer;
   let clientSocket: Socket;
 
   beforeAll((done) => {
     httpServer = createServer();
-    socketServer = new Server(httpServer, {});
     process.env.CONFIG_FILE_PATH = 'config.example.yml';
     process.env.DATABASE_HOST = 'localhost';
     process.env.MANAGEMENT_API_URL = 'http://localhost';
     process.env.MANAGEMENT_API_PORT = '8090';
-    setupServer(socketServer, httpServer);
+    setupServer();
     httpServer.close();
 
     clientSocket = Client(`http://localhost:8080`);
@@ -28,7 +24,6 @@ describe('Room Integration Tests', () => {
   });
 
   afterAll(() => {
-    socketServer.close();
     clientSocket.close();
   });
 
