@@ -5,7 +5,7 @@ import { RoomCreated } from '../room_api_models';
 import { RoomController } from '../room_controllers';
 import { RoomRepository } from '../room_repository';
 import { RoomService } from '../room_service';
-import { SetupLogger } from '~/core/logger/logger';
+import { Log } from '~/core/logger';
 import { ErrorMessage } from '~/types';
 
 describe('Room Controller', () => {
@@ -13,7 +13,6 @@ describe('Room Controller', () => {
   let socket: any;
 
   beforeAll(() => {
-    const logger = SetupLogger();
     const { username, password, host, port, name, authDB } = {
       username: 'mongodb-memory-server-root',
       password: 'rootuser',
@@ -26,6 +25,8 @@ describe('Room Controller', () => {
     const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
     const roomService = new RoomService(roomRepository, 'http://localhost');
     socket = new MockedServerSocket();
+    const logger = new Log();
+    logger.UpdateLogLevel('fatal');
     roomController = new RoomController(roomService, logger, socket.socketClient);
   });
 

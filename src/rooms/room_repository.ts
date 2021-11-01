@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
 import { GameState, Room } from './room_models';
-import { BaseRepository, Repository } from '~/core/repository/repository';
+import { BaseRepository, Repository } from '~/core/repository';
 
 export interface IRoomRepository extends Repository<Room> {
   GetAllRoomCodes(): Promise<string[]>;

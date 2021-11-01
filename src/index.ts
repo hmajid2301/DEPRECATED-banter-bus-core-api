@@ -9,16 +9,18 @@ import { TYPES } from './container.types';
 import { RegisterRoomHandler as RegisterRoomHandlers } from './handlers';
 import { IRoomRepository, RoomRepository } from './rooms/room_repository';
 import { IRoomService, RoomService } from './rooms/room_service';
-import { Config } from '~/core/config/config';
-import { SetupLogger, UpdateLogLevel } from '~/core/logger/logger';
+import { Config } from '~/core/config';
+import { Log } from '~/core/logger';
 import { RoomController } from '~/rooms/room_controllers';
 
 export function setupServer() {
-  let logger = SetupLogger();
+  const log = new Log();
   const configLoader = new TSConvict<Config>(Config);
   const configFilePath = process.env.CONFIG_FILE_PATH ?? 'config.yml';
   const config: Config = configLoader.load(configFilePath);
-  logger = UpdateLogLevel(logger, config.app.logLevel);
+  log.UpdateLogLevel(config.app.logLevel);
+  log.UpdateFormat(config.app.environment);
+  const logger = log.GetLogger();
 
   const { username, password, host, port, name, authDB } = config.database;
   let managementAPIBase: string = config.managementAPI.url;
@@ -42,8 +44,7 @@ export function setupServer() {
 
   io.on('connection', (socket: Socket) => {
     logger.debug('New client connected');
-    const roomController = new RoomController(roomService, logger, socket);
-
+    const roomController = new RoomController(roomService, log, socket);
 
     RegisterRoomHandlers(socket, roomController);
   });
