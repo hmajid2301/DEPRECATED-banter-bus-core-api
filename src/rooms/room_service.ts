@@ -22,9 +22,13 @@ export class RoomService implements IRoomService {
   }
 
   public async Create(gameName: string): Promise<Room> {
-    const validGame = await this.isValidGame(gameName);
-    if (!validGame) {
-      throw new Error(`game ${gameName} is not valid`);
+    try {
+      const validGame = await this.isValidGame(gameName);
+      if (!validGame) {
+        throw new Error(`game ${gameName} is not valid`);
+      }
+    } catch (err) {
+      throw new Error(`failed to fetch valid games ${err}`);
     }
 
     const roomCode = await this.getRoomCode();

@@ -33,7 +33,8 @@ export class RoomController {
       this.socket.emit('ROOM_CREATED', roomCreated);
       logger.debug('Sent `ROOM_CREATED` message');
     } catch (err) {
-      logger.error(`Failed to create a new room ${err}`);
+      logger.error(`Failed to create a new room`);
+      logger.error(err);
       logger.debug('Sending `ERROR` message');
       const error: ErrorMessage = {
         code: 'room_created_failure',

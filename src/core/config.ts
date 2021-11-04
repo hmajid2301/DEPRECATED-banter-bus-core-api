@@ -37,7 +37,7 @@ class Database implements DatabaseConfig {
   @Property({
     doc: 'Database host name/IP',
     format: String,
-    env: 'DATABASE_HOST',
+    env: 'BANTER_BUS_CORE_API_DATABASE_HOST',
     default: 'banterbus',
   })
   public host!: string;
@@ -46,14 +46,14 @@ class Database implements DatabaseConfig {
     doc: 'The port to connect to for the database.',
     format: 'port',
     default: 5432,
-    env: 'DATABASE_PORT',
+    env: 'BANTER_BUS_CORE_API_DATABASE_PORT',
   })
   public port!: number;
 
   @Property({
     doc: 'Database username',
     format: String,
-    env: 'DATABASE_USERNAME',
+    env: 'BANTER_BUS_CORE_API_DATABASE_USERNAME',
     default: 'banterbus',
   })
   public username!: string;
@@ -61,7 +61,7 @@ class Database implements DatabaseConfig {
   @Property({
     doc: 'Database password',
     format: String,
-    env: 'DATABASE_PASSWORD',
+    env: 'BANTER_BUS_CORE_API_DATABASE_PASSWORD',
     default: '',
   })
   public password!: string;
@@ -69,7 +69,7 @@ class Database implements DatabaseConfig {
   @Property({
     doc: 'Database name',
     format: String,
-    env: 'DATABASE_NAME',
+    env: 'BANTER_BUS_CORE_API_DATABASE_NAME',
     default: 'banterbus',
   })
   public name!: string;
@@ -77,7 +77,7 @@ class Database implements DatabaseConfig {
   @Property({
     doc: 'The Database to auth with.',
     format: String,
-    env: 'DATABASE_AUTHDB',
+    env: 'BANTER_BUS_CORE_API_DATABASE_AUTHDB',
     nullable: true,
     default: null,
   })
@@ -89,7 +89,7 @@ class App implements AppConfig {
     doc: 'The application environment.',
     format: ['debug', 'info', 'warning', 'error', 'critical'],
     default: 'info',
-    env: 'LOG_LEVEL',
+    env: 'BANTER_BUS_CORE_API_LOG_LEVEL',
   })
   public logLevel!: string;
 
@@ -105,7 +105,7 @@ class App implements AppConfig {
 class Webserver implements WebServerConfig {
   @Property({
     doc: 'The clients that can access this server.',
-    env: 'API_CORS',
+    env: 'BANTER_BUS_CORE_API_CORS',
     format: Array,
     default: ['*'],
   })
@@ -115,7 +115,7 @@ class Webserver implements WebServerConfig {
     doc: 'The port to bind.',
     format: 'port',
     arg: 'port',
-    env: 'API_PORT',
+    env: 'BANTER_BUS_CORE_API_PORT',
     default: 8080,
   })
   public port!: number;
@@ -126,7 +126,7 @@ class ManagementAPI implements ManagementAPIConfig {
     doc: 'The port to connect to.',
     format: 'port',
     nullable: true,
-    env: 'MANAGEMENT_API_PORT',
+    env: 'BANTER_BUS_CORE_API_MANAGEMENT_API_PORT',
     default: null,
   })
   public port!: number | null;
@@ -134,7 +134,7 @@ class ManagementAPI implements ManagementAPIConfig {
   @Property({
     doc: 'The URL to connect to.',
     format: 'url',
-    env: 'MANAGEMENT_API_URL',
+    env: 'BANTER_BUS_CORE_API_MANAGEMENT_API_URL',
     default: 'http://localhost',
   })
   public url!: string;

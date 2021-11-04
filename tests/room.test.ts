@@ -12,10 +12,6 @@ describe('Room Integration Tests', () => {
 
   beforeAll((done) => {
     httpServer = createServer();
-    process.env.CONFIG_FILE_PATH = 'config.example.yml';
-    process.env.DATABASE_HOST = 'localhost';
-    process.env.MANAGEMENT_API_URL = 'http://localhost';
-    process.env.MANAGEMENT_API_PORT = '8090';
     setupServer();
     httpServer.close();
 
@@ -27,7 +23,7 @@ describe('Room Integration Tests', () => {
     clientSocket.close();
   });
 
-  test('Create a new room', () => {
+  test('Create a new room', (done) => {
     const createdRoom: CreateRoom = {
       gameName: 'fibbing_it',
     };
@@ -38,6 +34,7 @@ describe('Room Integration Tests', () => {
 
       expect(roomCode).toMatch(/^[A-Z]{0,5}$/);
       expect(roomID).toBeTruthy();
+      done();
     });
   });
 

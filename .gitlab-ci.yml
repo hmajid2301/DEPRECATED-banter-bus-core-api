@@ -26,20 +26,20 @@ before_script:
       alias: banter-bus-database
     - name: registry.gitlab.com/banter-bus/banter-bus-gui:test
       alias: banter-bus-gui
-    - name: registry.gitlab.com/banter-bus/banter-bus-core-api:test
-      alias: banter-bus-core-api
     - name: registry.gitlab.com/banter-bus/banter-bus-management-api:test
       alias: banter-bus-management-api
     - name: registry.gitlab.com/banter-bus/banter-bus-tests/database-seed:latest
       alias: banter-bus-database-seed
   variables:
     BANTER_BUS_DB_HOST: 'banter-bus-database'
+    BANTER_BUS_CORE_API_DATABASE_HOST: 'banter-bus-database'
     BANTER_BUS_WEBSERVER_PORT: 8090
     MONGO_INITDB_ROOT_USERNAME: 'banterbus'
     MONGO_INITDB_ROOT_PASSWORD: 'banterbus'
     MONGO_INITDB_DATABASE: 'banterbus'
     MONGO_HOSTNAME: banter-bus-database:27017
-    BANTER_BUS_MANAGEMENT_API_BASE_URL: 'http://banter-bus-management-api'
+    BANTER_BUS_CORE_API_MANAGEMENT_API_URL: 'http://banter-bus-management-api'
+    BANTER_BUS_CORE_API_MANAGEMENT_API_PORT: 8090
     FF_NETWORK_PER_BUILD: 1
 
 install:dependencies:
@@ -106,7 +106,9 @@ test:integration:
   extends:
     - .test
   script:
+    - cp config.example.yml config.yml
     - make test-integration
+
 coverage:
   stage: test
   only:
@@ -115,6 +117,7 @@ coverage:
   extends:
     - .test
   script:
+    - cp config.example.yml config.yml
     - make coverage
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   artifacts:
