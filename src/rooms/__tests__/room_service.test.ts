@@ -23,6 +23,10 @@ describe('Room Service', () => {
     roomService = new RoomService(roomRepository, 'http://localhost');
   });
 
+  afterAll(async () => {
+    await roomService.Close();
+  });
+
   test('Create a room ', async () => {
     const validGamesResponse: AxiosResponse<string[], unknown> = {
       data: ['fibbing_it'],

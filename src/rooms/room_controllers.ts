@@ -44,4 +44,8 @@ export class RoomController {
       logger.debug('Sent `ERROR` message');
     }
   }
+
+  public async Close(): Promise<void> {
+    await this._roomService.Close();
+  }
 }

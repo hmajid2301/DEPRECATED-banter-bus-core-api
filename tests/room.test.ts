@@ -1,4 +1,4 @@
-import { createServer, Server as HTTPServer } from 'http';
+import { createServer, Server } from 'http';
 import 'reflect-metadata';
 import Client, { Socket } from 'socket.io-client';
 
@@ -7,19 +7,19 @@ import { CreateRoom, RoomCreated } from '~/rooms/room_api_models';
 import { ErrorMessage } from '~/types';
 
 describe('Room Integration Tests', () => {
-  let httpServer: HTTPServer;
   let clientSocket: Socket;
+  let httpServer: Server;
 
   beforeAll((done) => {
     httpServer = createServer();
-    setupServer();
-    httpServer.close();
+    setupServer(httpServer);
 
     clientSocket = Client(`http://localhost:8080`);
     clientSocket.on('connect', done);
   });
 
   afterAll(() => {
+    httpServer.close();
     clientSocket.close();
   });
 

@@ -8,6 +8,7 @@ import { TYPES } from '~/container.types';
 
 export interface IRoomService {
   Create(gameName: string): Promise<Room>;
+  Close(): Promise<void>;
 }
 
 @injectable()
@@ -78,5 +79,9 @@ export class RoomService implements IRoomService {
 
     const gameExists = gameNames.includes(gameName);
     return gameExists;
+  }
+
+  public async Close(): Promise<void> {
+    await this._roomRepository.CloseConnection();
   }
 }

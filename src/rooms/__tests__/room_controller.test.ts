@@ -30,6 +30,10 @@ describe('Room Controller', () => {
     roomController = new RoomController(roomService, logger, socket.socketClient);
   });
 
+  afterAll(async () => {
+    await roomController.Close();
+  });
+
   test('Create a room ', async () => {
     socket.on('ROOM_CREATED', (roomCreated: RoomCreated) => {
       const { roomCode, roomID } = roomCreated;

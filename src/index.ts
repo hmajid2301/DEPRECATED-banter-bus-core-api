@@ -1,4 +1,4 @@
-import { createServer } from 'http';
+import { createServer, Server as HTTPServer } from 'http';
 import { Container } from 'inversify';
 import 'module-alias/register';
 import 'reflect-metadata';
@@ -13,7 +13,7 @@ import { Config } from '~/core/config';
 import { Log } from '~/core/logger';
 import { RoomController } from '~/rooms/room_controllers';
 
-export function setupServer() {
+export function setupServer(httpServer: HTTPServer) {
   const log = new Log();
   const configLoader = new TSConvict<Config>(Config);
   const configFilePath = process.env.CONFIG_FILE_PATH ?? 'config.yml';
@@ -35,7 +35,6 @@ export function setupServer() {
   const roomService = new RoomService(roomRepository, managementAPIBase);
   container.bind<IRoomService>(TYPES.RoomService).toConstantValue(roomService);
 
-  const httpServer = createServer();
   const io = new Server(httpServer, {
     cors: {
       origin: config.webserver.cors,
@@ -49,12 +48,15 @@ export function setupServer() {
     RegisterRoomHandlers(socket, roomController);
   });
 
+  io.close();
+
   logger.info(`Banter Bus Core API started on 0.0.0.0:${config.webserver.port}`);
   httpServer.listen(config.webserver.port, '0.0.0.0');
 }
 
 function main() {
-  setupServer();
+  const httpServer = createServer();
+  setupServer(httpServer);
 }
 
 if (require.main === module) {
