@@ -5,10 +5,14 @@ import 'reflect-metadata';
 import { Server, Socket } from 'socket.io';
 import { TSConvict } from 'ts-convict';
 
+import HttpClient from './clients/management_api/HttpClient';
+import { GameService } from './clients/management_api/api/game.service';
 import { TYPES } from './container.types';
 import { RegisterRoomHandler as RegisterRoomHandlers } from './handlers';
 import { IRoomRepository, RoomRepository } from './rooms/room_repository';
 import { IRoomService, RoomService } from './rooms/room_service';
+import { ApiServiceBinder } from '~/clients/management_api/ApiServiceBinder';
+import { IAPIConfiguration } from '~/clients/management_api/IAPIConfiguration';
 import { Config } from '~/core/config';
 import { Log } from '~/core/logger';
 import { RoomController } from '~/rooms/room_controllers';
@@ -29,10 +33,19 @@ export function setupServer(httpServer: HTTPServer) {
   }
 
   const container = new Container();
+
+  const apiConfiguration: IAPIConfiguration = {
+    basePath: managementAPIBase,
+  };
+  container.bind<IAPIConfiguration>(TYPES.IApiConfiguration).toConstantValue(apiConfiguration);
+  ApiServiceBinder.with(container);
+
   const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
   container.bind<IRoomRepository>(TYPES.RoomRepository).toConstantValue(roomRepository);
 
-  const roomService = new RoomService(roomRepository, managementAPIBase);
+  const httpClient = new HttpClient();
+  const gameService = new GameService(httpClient, apiConfiguration);
+  const roomService = new RoomService(roomRepository, gameService);
   container.bind<IRoomService>(TYPES.RoomService).toConstantValue(roomService);
 
   const io = new Server(httpServer, {

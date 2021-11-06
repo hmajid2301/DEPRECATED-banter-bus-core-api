@@ -31,7 +31,7 @@ export class BaseRepository<T, U extends AnyParamConstructor<T> = AnyParamConstr
     return new Promise((resolve, reject) => {
       this.model
         .create(doc)
-        .then((result) => resolve(result.toJSON() as T))
+        .then((result) => resolve(result?.toJSON() as T))
         .catch((err) => reject(err));
     });
   }

@@ -1,9 +1,10 @@
 import { inject, injectable } from 'inversify';
+import { firstValueFrom } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GameState, Room } from './room_models';
 import { IRoomRepository } from './room_repository';
-import { GameApi } from '~/clients/management_api/';
+import { GameService } from '~/clients/management_api/api/game.service';
 import { TYPES } from '~/container.types';
 
 export interface IRoomService {
@@ -13,14 +14,10 @@ export interface IRoomService {
 
 @injectable()
 export class RoomService implements IRoomService {
-  private gameAPI: GameApi;
-
   constructor(
     @inject(TYPES.RoomRepository) private readonly _roomRepository: IRoomRepository,
-    managementAPIBase: string,
-  ) {
-    this.gameAPI = new GameApi(undefined, managementAPIBase);
-  }
+    @inject(TYPES.IApiConfiguration) private readonly _gameAPI: GameService,
+  ) {}
 
   public async Create(gameName: string): Promise<Room> {
     try {
@@ -74,8 +71,9 @@ export class RoomService implements IRoomService {
   }
 
   private async isValidGame(gameName: string): Promise<boolean> {
-    const response = await this.gameAPI.getGamesFm();
-    const gameNames = response.data;
+    const response = this._gameAPI.getGames('enabled', 'response');
+    const data = await firstValueFrom(response);
+    const gameNames = data.response;
 
     const gameExists = gameNames.includes(gameName);
     return gameExists;

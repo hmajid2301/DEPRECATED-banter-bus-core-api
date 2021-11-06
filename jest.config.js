@@ -11,4 +11,9 @@ module.exports = {
   },
   globalSetup: '<rootDir>/tests/setup.ts',
   globalTeardown: '<rootDir>/tests/teardown.ts',
+  transform: {
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
+  },
+  transformIgnorePatterns: ['node_modules/(?!node-fetch|fetch-blob)'],
 };

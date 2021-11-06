@@ -1,11 +1,13 @@
-import { AxiosResponse } from 'axios';
-import { StatusCodes } from 'http-status-codes';
+import { Observable, of } from 'rxjs';
 
 import roomFactory from '../../../tests/factories/room';
 import { GameState } from '../room_models';
 import { RoomRepository } from '../room_repository';
 import { RoomService } from '../room_service';
-import { GameApi } from '~/clients/management_api';
+import HttpClient from '~/clients/management_api/HttpClient';
+import HttpResponse from '~/clients/management_api/HttpResponse';
+import { IAPIConfiguration } from '~/clients/management_api/IAPIConfiguration';
+import { GameService } from '~/clients/management_api/api/game.service';
 
 describe('Room Service', () => {
   let roomService: RoomService;
@@ -19,8 +21,14 @@ describe('Room Service', () => {
       authDB: 'admin',
     };
 
+    const apiConfiguration: IAPIConfiguration = {
+      basePath: 'http://localhost',
+    };
+    const httpClient = new HttpClient();
+    const gameService = new GameService(httpClient, apiConfiguration);
+
     const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
-    roomService = new RoomService(roomRepository, 'http://localhost');
+    roomService = new RoomService(roomRepository, gameService);
   });
 
   afterAll(async () => {
@@ -28,14 +36,8 @@ describe('Room Service', () => {
   });
 
   test('Create a room ', async () => {
-    const validGamesResponse: AxiosResponse<string[], unknown> = {
-      data: ['fibbing_it'],
-      status: StatusCodes.OK,
-      statusText: 'all good',
-      headers: {},
-      config: {},
-    };
-    jest.spyOn(GameApi.prototype, 'getGamesFm').mockImplementation(() => Promise.resolve(validGamesResponse));
+    const validGamesResponse: Observable<HttpResponse<string[]>> = of(new HttpResponse(['fibbing_it'], 200));
+    jest.spyOn(GameService.prototype, 'getGames').mockReturnValue(validGamesResponse);
 
     const usedRoomCodes = ['FFFFF'];
     jest.spyOn(RoomRepository.prototype, 'GetAllRoomCodes').mockImplementation(() => Promise.resolve(usedRoomCodes));
@@ -50,14 +52,8 @@ describe('Room Service', () => {
   });
 
   test('Attempt to a create a room with invalid game', async () => {
-    const validGamesResponse: AxiosResponse<string[], unknown> = {
-      data: ['fibbing_it'],
-      status: StatusCodes.OK,
-      statusText: 'all good',
-      headers: {},
-      config: {},
-    };
-    jest.spyOn(GameApi.prototype, 'getGamesFm').mockImplementation(() => Promise.resolve(validGamesResponse));
+    const validGamesResponse: Observable<HttpResponse<string[]>> = of(new HttpResponse(['fibbing_it'], 200));
+    jest.spyOn(GameService.prototype, 'getGames').mockReturnValue(validGamesResponse);
 
     const usedRoomCodes = ['FFFFF'];
     jest.spyOn(RoomRepository.prototype, 'GetAllRoomCodes').mockImplementation(() => Promise.resolve(usedRoomCodes));

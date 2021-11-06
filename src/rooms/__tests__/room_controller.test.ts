@@ -5,6 +5,9 @@ import { RoomCreated } from '../room_api_models';
 import { RoomController } from '../room_controllers';
 import { RoomRepository } from '../room_repository';
 import { RoomService } from '../room_service';
+import HttpClient from '~/clients/management_api/HttpClient';
+import { IAPIConfiguration } from '~/clients/management_api/IAPIConfiguration';
+import { GameService } from '~/clients/management_api/api/game.service';
 import { Log } from '~/core/logger';
 import { ErrorMessage } from '~/types';
 
@@ -22,8 +25,14 @@ describe('Room Controller', () => {
       authDB: 'admin',
     };
 
+    const apiConfiguration: IAPIConfiguration = {
+      basePath: 'http://localhost',
+    };
+    const httpClient = new HttpClient();
+    const gameService = new GameService(httpClient, apiConfiguration);
     const roomRepository = new RoomRepository(username, password, host, port, name, authDB);
-    const roomService = new RoomService(roomRepository, 'http://localhost');
+    const roomService = new RoomService(roomRepository, gameService);
+
     socket = new MockedServerSocket();
     const logger = new Log();
     logger.UpdateLogLevel('fatal');
