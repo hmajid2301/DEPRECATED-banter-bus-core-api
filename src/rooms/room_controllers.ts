@@ -1,25 +1,20 @@
 import { inject } from 'inversify';
-import { Socket } from 'socket.io';
 
 import { CreateRoom, RoomCreated } from './room_api_models';
 import { IRoomService } from './room_service';
 import { TYPES } from '~/container.types';
 import { ILog } from '~/core/logger';
-import { ErrorMessage } from '~/types';
+import { ErrorMessage, ResponseEvent } from '~/types';
 
 export class RoomController {
-  private socket: Socket;
-
   constructor(
     @inject(TYPES.RoomRepository) private readonly _roomService: IRoomService,
     @inject(TYPES.Logger) private readonly _log: ILog,
-    socket: Socket,
   ) {
     this._log = _log;
-    this.socket = socket;
   }
 
-  public async CreateRoom(createRoom: CreateRoom): Promise<void> {
+  public async CreateRoom(createRoom: CreateRoom): Promise<ResponseEvent> {
     const logger = this._log.GetLogger();
     logger.debug('Trying to create a new room');
     try {
@@ -30,8 +25,10 @@ export class RoomController {
         roomID: newRoom.id,
       };
       logger.debug('Sending `ROOM_CREATED` message');
-      this.socket.emit('ROOM_CREATED', roomCreated);
-      logger.debug('Sent `ROOM_CREATED` message');
+      return {
+        eventName: 'ROOM_CREATED',
+        eventContent: roomCreated,
+      };
     } catch (err) {
       logger.error(`Failed to create a new room`);
       logger.error(err);
@@ -40,8 +37,10 @@ export class RoomController {
         code: 'room_created_failure',
         message: 'Failed to create room',
       };
-      this.socket.emit('ERROR', error);
-      logger.debug('Sent `ERROR` message');
+      return {
+        eventName: 'ERROR',
+        eventContent: error,
+      };
     }
   }
 

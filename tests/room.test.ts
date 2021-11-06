@@ -38,7 +38,7 @@ describe('Room Integration Tests', () => {
     });
   });
 
-  test('Fail to create a new room', () => {
+  test('Fail to create a new room', (done) => {
     const createdRoom: CreateRoom = {
       gameName: 'quibly',
     };
@@ -48,6 +48,7 @@ describe('Room Integration Tests', () => {
       const { code, message } = error;
       expect(code).toBe('room_created_failure');
       expect(message).toBe('Failed to create room');
+      done();
     });
   });
 });

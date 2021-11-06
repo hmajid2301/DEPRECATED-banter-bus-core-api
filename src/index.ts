@@ -54,9 +54,9 @@ export function setupServer(httpServer: HTTPServer) {
     },
   });
 
+  const roomController = new RoomController(roomService, log);
   io.on('connection', (socket: Socket) => {
     logger.debug('New client connected');
-    const roomController = new RoomController(roomService, log, socket);
 
     RegisterRoomHandlers(socket, roomController);
   });
