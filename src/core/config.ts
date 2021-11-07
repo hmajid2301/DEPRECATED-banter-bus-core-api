@@ -26,7 +26,7 @@ export interface ManagementAPIConfig {
   url: string;
 }
 
-export interface Config {
+export interface IConfig {
   app: AppConfig;
   database: DatabaseConfig;
   webserver: WebServerConfig;
@@ -151,7 +151,7 @@ class ManagementAPI implements ManagementAPIConfig {
     url,
   },
 })
-export class Config implements Config {
+export class Config implements IConfig {
   @Property(App)
   public app!: AppConfig;
 

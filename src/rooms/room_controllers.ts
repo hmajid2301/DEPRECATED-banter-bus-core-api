@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 import { CreateRoom, RoomCreated } from './room_api_models';
 import { IRoomService } from './room_service';
@@ -6,9 +6,14 @@ import { TYPES } from '~/container.types';
 import { ILog } from '~/core/logger';
 import { ErrorMessage, ResponseEvent } from '~/types';
 
-export class RoomController {
+export interface IRoomController {
+  CreateRoom(creatRoom: CreateRoom): Promise<ResponseEvent>;
+}
+
+@injectable()
+export class RoomController implements IRoomController {
   constructor(
-    @inject(TYPES.RoomRepository) private readonly _roomService: IRoomService,
+    @inject(TYPES.RoomService) private readonly _roomService: IRoomService,
     @inject(TYPES.Logger) private readonly _log: ILog,
   ) {
     this._log = _log;

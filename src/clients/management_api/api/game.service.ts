@@ -11,20 +11,19 @@
  */
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { Observable } from 'rxjs';
-
-import { map } from 'rxjs/operators';
-import IHttpClient from '../IHttpClient';
 import { inject, injectable } from 'inversify';
-import { IAPIConfiguration } from '../IAPIConfiguration';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { TYPES } from '~/container.types';
 import { Headers } from '../Headers';
 import HttpResponse from '../HttpResponse';
-
+import { IAPIConfiguration } from '../IAPIConfiguration';
+import IHttpClient from '../IHttpClient';
 import { AddGameInput } from '../model/addGameInput';
 import { GamesGameOut } from '../model/gamesGameOut';
-import { RoutesAPIError } from '../model/routesAPIError';
 
-import { COLLECTION_FORMATS }  from '../variables';
+
+
 
 
 
@@ -32,8 +31,8 @@ import { COLLECTION_FORMATS }  from '../variables';
 export class GameService {
     private basePath: string = 'http://localhost';
 
-    constructor(@inject('IApiHttpClient') private httpClient: IHttpClient,
-        @inject('IAPIConfiguration') private APIConfiguration: IAPIConfiguration ) {
+    constructor(@inject(TYPES.HttpClient) private httpClient: IHttpClient,
+        @inject(TYPES.ApiConfiguration) private APIConfiguration: IAPIConfiguration ) {
         if(this.APIConfiguration.basePath)
             this.basePath = this.APIConfiguration.basePath;
     }

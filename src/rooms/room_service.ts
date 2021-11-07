@@ -16,7 +16,7 @@ export interface IRoomService {
 export class RoomService implements IRoomService {
   constructor(
     @inject(TYPES.RoomRepository) private readonly _roomRepository: IRoomRepository,
-    @inject(TYPES.IApiConfiguration) private readonly _gameAPI: GameService,
+    @inject(TYPES.GameService) private readonly _gameServiceAPI: GameService,
   ) {}
 
   public async Create(gameName: string): Promise<Room> {
@@ -71,7 +71,7 @@ export class RoomService implements IRoomService {
   }
 
   private async isValidGame(gameName: string): Promise<boolean> {
-    const response = this._gameAPI.getGames('enabled', 'response');
+    const response = this._gameServiceAPI.getGames('enabled', 'response');
     const data = await firstValueFrom(response);
     const gameNames = data.response;
 

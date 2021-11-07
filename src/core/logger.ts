@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { Logger, TLogLevelName } from 'tslog';
 
 export interface ILog {
@@ -6,6 +7,7 @@ export interface ILog {
   GetLogger(): Logger;
 }
 
+@injectable()
 export class Log implements ILog {
   private readonly logger: Logger;
 
